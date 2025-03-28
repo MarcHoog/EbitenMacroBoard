@@ -9,6 +9,7 @@ import (
 
 type Key struct {
 	Label         string
+	RuneValue     rune // Only support 16 bit unicodes for a now
 	X, Y          int
 	Width, Height int
 	Hovered       bool

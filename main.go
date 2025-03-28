@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"log"
 	"macroboard/internal/windows_api"
@@ -12,20 +13,27 @@ type Game struct {
 
 func NewGame() *Game {
 
-	kb := KeyBoard{
-		Options: KeyBoardOptions{
-			Padding:   20,
-			Spacing:   5,
-			KeyWidth:  100,
-			KeyHeight: 100,
-			FontScale: 2.0,
-		},
+	fp, err := getConfigFilePath()
+	if err != nil {
+		log.Fatal(err)
 	}
-	kb.CalcBpSize()
+	fmt.Println("Config Path:", fp)
+	config, err := NewConfigFromFile(fp)
+	if err != nil {
+		panic(err)
+	}
+	kb := KeyBoard{
+		Options: config.KeyBoardOptions,
+	}
+	for _, k := range config.Keys {
+		if len(k.RuneValue) > 1 {
+			// DO SOMETHING?
+		}
+		r := []rune(k.RuneValue)
 
-	kb.RegisterKey("A", "A")
-	kb.RegisterKey("B", "B")
-	kb.RegisterKey("C", "C")
+		kb.RegisterKey(k.Label, r[0])
+	}
+
 	return &Game{keyboard: kb}
 }
 
@@ -42,7 +50,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return g.keyboard.bpWidth, g.keyboard.bpHeight
 }
-
 func main() {
 
 	go windows_api.TrackActiveWindow()

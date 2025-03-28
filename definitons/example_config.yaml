@@ -1,0 +1,22 @@
+---
+KeyBoardOptions:
+  padding: 2
+  spacing: 2
+  keyWidth: 100
+  KeyHeight: 100
+  FontScale: 1.5
+
+Keys:
+  - label: A
+    runeValue: A
+  - label: A
+    runeValue: A
+  - label: A
+    runeValue: A
+  - label: A
+    runeValue: A
+  - label: A
+    runeValue: A
+
+
+
