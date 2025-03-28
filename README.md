@@ -13,14 +13,11 @@ Dynamic MacroBoard is a Windows-only macro keyboard built in Go using Ebiten for
 - **Dynamic Key Configuration:**  
   Supports dynamically mapping key labels to Unicode events. You can extend this to load key mappings from a configuration file.
 
-- **Cross-Architecture Size Handling:**  
-  Automatically adjusts the INPUT structure size based on whether you're running on 32-bit or 64-bit Windows.
-
 ## Requirements
 
 - **Operating System:**  
-  Windows (this project uses Windows-specific API calls).
-
+  Windows 64 bits (this project uses Windows-specific API calls).
+ 
 - **Go:**  
   Go 1.16+ is recommended.
 
