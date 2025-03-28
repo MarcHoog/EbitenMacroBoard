@@ -73,7 +73,6 @@ func SendTextUniversal(r rune) {
 			},
 		})
 
-		// Optionally, you can add the key up events as well:
 		ks = append(ks, input{
 			inputType: 1,
 			ki: keyboardInput{

@@ -8,7 +8,7 @@ import (
 )
 
 type Game struct {
-	keyboard KeyBoard
+	keyboard *KeyBoard
 }
 
 func NewGame() *Game {
@@ -22,9 +22,7 @@ func NewGame() *Game {
 	if err != nil {
 		panic(err)
 	}
-	kb := KeyBoard{
-		Options: config.KeyBoardOptions,
-	}
+	kb := NewKeyBoard(&config.KeyBoardOptions)
 	for _, k := range config.Keys {
 		if len(k.RuneValue) > 1 {
 			// DO SOMETHING?

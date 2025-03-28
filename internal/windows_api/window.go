@@ -41,7 +41,6 @@ func loadWindowHandle() (uintptr, error) {
 	return hwnd, nil
 }
 
-// getActiveWindowHandle retrieves the HWND of the active window
 func getActiveWindowHandle() uintptr {
 	hwnd, _, _ := getForegroundWindow.Call()
 	return hwnd
@@ -56,7 +55,6 @@ func findWindowByTitle(title string) uintptr {
 func GetCurrentWindowTitle() string {
 	hwnd, _ := loadWindowHandle()
 
-	// Ensure the window is still valid before getting the title
 	if windows.IsWindow(windows.HWND(hwnd)) == false {
 		return ""
 	}
@@ -67,10 +65,7 @@ func GetCurrentWindowTitle() string {
 }
 
 func TrackActiveWindow() {
-
 	var ownHwnd uintptr
-
-	// Keep checking until the window is found
 	for ownHwnd == 0 {
 		ownHwnd = findWindowByTitle("MacroBoard")
 		if ownHwnd == 0 {
@@ -80,8 +75,6 @@ func TrackActiveWindow() {
 	}
 
 	fmt.Printf("Found MacroBoard Window: 0x%X\n", ownHwnd)
-
-	// INJECTS SO THAT THE WINDOW DOESN"T GET FOCUSED AND THE ACTIVE FOCUS STAYS ON TOP OF ANOTHER WINDOW
 	currentStyle, _, err := getWindowLongProc.Call(ownHwnd, GWL_EXSTYLE)
 	if err != nil {
 		fmt.Printf("Getting Current Window Style: %v\n", err)
@@ -94,8 +87,6 @@ func TrackActiveWindow() {
 
 	for {
 		hwnd := getActiveWindowHandle()
-
-		// Ignore if it's our own window
 		if hwnd != ownHwnd {
 			activeWindowHandle.Store(hwnd)
 			fmt.Printf("Stored Window ID: 0x%X\n", hwnd)

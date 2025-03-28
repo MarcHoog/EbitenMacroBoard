@@ -3,18 +3,19 @@ package main
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
-	"golang.org/x/image/font/basicfont"
+	"golang.org/x/image/font"
 	"image/color"
 )
 
 type Key struct {
 	Label         string
-	RuneValue     rune // Only support 16 bit unicodes for a now
+	RuneValue     rune
 	X, Y          int
 	Width, Height int
 	Hovered       bool
 	Clicked       bool
 	Handler       Handler
+	Font          font.Face
 }
 
 func (k *Key) Update(mouseX, mouseY int) {
@@ -36,67 +37,37 @@ func (k *Key) Update(mouseX, mouseY int) {
 
 }
 
-func (k *Key) Draw(screen *ebiten.Image, fontScale float64) error {
-	// Create a key background image.
-	keyImg := ebiten.NewImage(k.Width, k.Height)
-
-	if k.Hovered && !k.Clicked {
-		keyImg.Fill(color.RGBA{
-			R: 36,
-			G: 36,
-			B: 36,
-			A: 255,
-		})
-	} else if k.Hovered && k.Clicked {
-		keyImg.Fill(color.RGBA{
-			R: 0,
-			G: 0,
-			B: 0,
-			A: 255,
-		})
-
-	} else {
-		keyImg.Fill(color.RGBA{
-			R: 72,
-			G: 72,
-			B: 72,
-			A: 255,
-		})
+func (k *Key) Draw(screen *ebiten.Image, fontSize float64) error {
+	// Determine key color based on state
+	var keyColor color.RGBA
+	switch {
+	case k.Hovered && k.Clicked:
+		keyColor = color.RGBA{R: 0, G: 0, B: 0, A: 255} // Black when clicked
+	case k.Hovered:
+		keyColor = color.RGBA{R: 36, G: 36, B: 36, A: 255} // Dark gray when hovered
+	default:
+		keyColor = color.RGBA{R: 72, G: 72, B: 72, A: 255} // Medium gray by default
 	}
-	// Draw the key background onto the screen.
-	opKey := &ebiten.DrawImageOptions{}
-	opKey.GeoM.Translate(float64(k.X), float64(k.Y))
-	screen.DrawImage(keyImg, opKey)
 
-	// Use basicfont.Face7x13 as the base font.
-	// Base dimensions for one character:
-	baseCharWidth, baseCharHeight := 7, 13
+	// Draw key background
+	keyImg := ebiten.NewImage(k.Width, k.Height)
+	keyImg.Fill(keyColor)
 
-	// Calculate text dimensions.
-	textWidth := len(k.Label) * baseCharWidth
-	textHeight := baseCharHeight
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(k.X), float64(k.Y))
+	screen.DrawImage(keyImg, op)
 
-	// Create an offscreen image for the letter.
-	letterImg := ebiten.NewImage(textWidth, textHeight)
-	letterImg.Fill(color.Transparent)
-	// Render the label onto the offscreen image.
-	text.Draw(letterImg, k.Label, basicfont.Face7x13, 0, textHeight, color.Black)
+	// Get font face
 
-	// Prepare transformation to scale the letter.
-	opText := &ebiten.DrawImageOptions{}
-	opText.GeoM.Scale(fontScale, fontScale)
+	// Calculate text position
+	bounds := text.BoundString(k.Font, k.Label)
+	textWidth := bounds.Max.X - bounds.Min.X
+	textHeight := bounds.Max.Y - bounds.Min.Y
 
-	// Calculate the scaled dimensions.
-	scaledWidth := float64(textWidth) * fontScale
-	scaledHeight := float64(textHeight) * fontScale
+	textX := k.X + (k.Width-textWidth)/2
+	textY := k.Y + (k.Height+textHeight)/2
 
-	// Center the scaled text within the key square.
-	textX := float64(k.X) + float64(k.Width)/2 - scaledWidth/2
-	textY := float64(k.Y) + float64(k.Height)/2 - scaledHeight/2
-	opText.GeoM.Translate(textX, textY)
-
-	// Draw the scaled letter onto the screen.
-	screen.DrawImage(letterImg, opText)
+	text.Draw(screen, k.Label, k.Font, textX, textY, color.White)
 
 	return nil
 }

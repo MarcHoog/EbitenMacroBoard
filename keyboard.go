@@ -2,7 +2,9 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"golang.org/x/image/font"
 	"image/color"
+	"log"
 )
 
 type KeyBoardOptions struct {
@@ -18,17 +20,19 @@ var DefaultKeyBoardOptions = KeyBoardOptions{
 	Spacing:   2,
 	KeyWidth:  100,
 	KeyHeight: 100,
-	FontScale: 1.5,
+	FontScale: 5,
 }
 
 type KeyBoard struct {
 	Options  KeyBoardOptions
 	Keys     []*Key
+	FontFace font.Face
 	bpWidth  int
 	bpHeight int
 }
 
 func NewKeyBoard(options *KeyBoardOptions) *KeyBoard {
+
 	if options != nil {
 
 		if options.Padding < 1 {
@@ -50,7 +54,13 @@ func NewKeyBoard(options *KeyBoardOptions) *KeyBoard {
 		options = &DefaultKeyBoardOptions
 	}
 
-	keyboard := &KeyBoard{Options: *options}
+	fontFace, err := CreateFontFace(options.FontScale)
+	if err != nil {
+		log.Printf("Failed to load font: %v", err)
+		fontFace = FallbackFontFace(options.FontScale)
+	}
+
+	keyboard := &KeyBoard{Options: *options, FontFace: fontFace}
 	return keyboard
 
 }
@@ -70,6 +80,7 @@ func (kb *KeyBoard) RegisterKey(label string, runeValue rune) {
 		Y:         kb.Options.Padding,
 		Height:    kb.Options.KeyHeight,
 		Width:     kb.Options.KeyWidth,
+		Font:      kb.FontFace,
 		Handler:   &EmulateKeyHandler{},
 	})
 
@@ -78,25 +89,18 @@ func (kb *KeyBoard) RegisterKey(label string, runeValue rune) {
 }
 
 func (kb *KeyBoard) Draw(screen *ebiten.Image) (err error) {
-	// Draw the Backplate
-
 	backPlate := ebiten.NewImage(kb.bpWidth, kb.bpHeight)
 	backPlate.Fill(color.RGBA{R: 100, G: 100, B: 100, A: 255})
-
-	// Decide where to position the backplate on the screen.
-	// Here, we use a fixed offset (e.g., 50, 50).
 	backPlateX, backPlateY := 0.0, 0.0
 	opBP := &ebiten.DrawImageOptions{}
 	opBP.GeoM.Translate(backPlateX, backPlateY)
 	screen.DrawImage(backPlate, opBP)
-
 	for _, k := range kb.Keys {
 		k.Draw(screen, kb.Options.FontScale)
 	}
 
 	return
 }
-
 func (kb *KeyBoard) Update() (err error) {
 	mouseX, mouseY := ebiten.CursorPosition()
 

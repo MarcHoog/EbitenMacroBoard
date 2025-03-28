@@ -37,8 +37,6 @@ func NewConfigFromFile(path string) (*Config, error) {
 	}
 
 	defer file.Close()
-
-	// Unmarshal the YAML data into the Config struct
 	decoder := yaml.NewDecoder(file)
 	err = decoder.Decode(&config)
 	if err != nil {
