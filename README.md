@@ -1,4 +1,4 @@
-# 🎹 Dynamic MacroBoard (SendInput) 🎹
+# Dynamic MacroBoard (SendInput)
 
 **Dynamic MacroBoard** is a **Windows-only** macro keyboard built in **Go** using **Ebiten** for the graphical interface and the **Windows API (SendInput)** for simulating global Unicode key presses.  
 With this tool, you can configure keys that—when clicked—simulate **key events** even if the Ebiten window is **unfocused**! 🎯
@@ -21,10 +21,10 @@ Supports dynamically mapping **key labels to Unicode events**. You can extend th
 ## 🛠️ Requirements
 
 - **🖥️ Operating System:**  
-  🏁 Windows **64-bit** (this project uses Windows-specific API calls).
+Windows **64-bit** (this project uses Windows-specific API calls).
 
 - **🐹 Go:**  
-  ⚡ Go **1.16+** is recommended.
+  Go **1.16+** is recommended.
 
 - **📦 Dependencies:**
     - 🎮 [Ebiten](https://github.com/hajimehoshi/ebiten) (Game Library)
@@ -34,30 +34,6 @@ Supports dynamically mapping **key labels to Unicode events**. You can extend th
 
 ---
 
-## 🚀 Installation
-
-### 1️⃣ **Clone the repository**
-
-```bash
-git clone https://github.com/yourusername/dynamic-macroboard.git
-cd dynamic-macroboard
-```
-
-### 2️⃣ **Install Dependencies**
-
-If you haven’t already installed Ebiten, run:
-
-```bash
-go get github.com/hajimehoshi/ebiten/v2
-```
-
-### 3️⃣ **Build the project**
-
-```bash
-go build -o macroboard.exe
-```
-
----
 
 ## 🛠️ How It Works
 
