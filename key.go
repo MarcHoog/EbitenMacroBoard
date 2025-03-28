@@ -42,21 +42,26 @@ func (k *Key) Draw(screen *ebiten.Image, fontScale float64) error {
 
 	if k.Hovered && !k.Clicked {
 		keyImg.Fill(color.RGBA{
-			R: 100,
-			G: 243,
-			B: 51,
+			R: 36,
+			G: 36,
+			B: 36,
 			A: 255,
 		})
 	} else if k.Hovered && k.Clicked {
 		keyImg.Fill(color.RGBA{
-			R: 100,
-			G: 243,
-			B: 254,
+			R: 0,
+			G: 0,
+			B: 0,
 			A: 255,
 		})
 
 	} else {
-		keyImg.Fill(color.White)
+		keyImg.Fill(color.RGBA{
+			R: 72,
+			G: 72,
+			B: 72,
+			A: 255,
+		})
 	}
 	// Draw the key background onto the screen.
 	opKey := &ebiten.DrawImageOptions{}
